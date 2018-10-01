@@ -1,7 +1,7 @@
 version: 2
 jobs:
   node:
-    working_directory: ~/react-native-start
+    working_directory: ~/demo-react-native
     docker:
       - image: circleci/node:8
     steps:
@@ -34,7 +34,7 @@ jobs:
             JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
 
       - persist_to_workspace:
-          root: ~/react-native-start
+          root: ~/demo-react-native
           paths:
             - node_modules
 
@@ -45,15 +45,15 @@ jobs:
           path: test-results
 
   android:
-    working_directory: ~/react-native-start/android
+    working_directory: ~/demo-react-native/android
     docker:
       - image: circleci/android:api-27-node8-alpha
     steps:
       - checkout:
-          path: ~/react-native-start
+          path: ~/demo-react-native
 
       - attach_workspace:
-          at: ~/react-native-start
+          at: ~/demo-react-native
 
       - restore_cache:
           key: bundle-v1-{{ checksum "Gemfile.lock" }}-{{ arch }}
@@ -71,7 +71,6 @@ jobs:
             mkdir -p test-results/fastlane
             bundle exec fastlane test
             mv fastlane/report.xml test-results/fastlane
-
       - store_test_results:
           path: test-results
 
@@ -81,7 +80,7 @@ jobs:
   ios:
     macos:
       xcode: "9.0"
-    working_directory: ~/react-native-start
+    working_directory: ~/demo-react-native
 
     # use a --login shell so our "set Ruby version" command gets picked up for later steps
     shell: /bin/bash --login -o pipefail
@@ -137,7 +136,6 @@ jobs:
             mkdir -p test-results/fastlane test-results/xcode
             mv fastlane/report.xml test-results/fastlane
             mv fastlane/test_output/report.junit test-results/xcode/junit.xml
-
       - store_test_results:
           path: ios/test-results
 
